@@ -13,19 +13,21 @@ import org.json.JSONObject;
 import services.ServicesTools;
 import services.errors.ServerErrors;
 
+public class Register extends HttpServlet {
+	private static final long serialVersionUID = 3019529540940337210L;
 
-public class Login extends HttpServlet {
-	private static final long serialVersionUID = -1969175381640448283L;
-
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		JSONObject anwser = new JSONObject();
 		
+		
 		String username = req.getParameter(Authentication.PARAM_USERNAME);
 		String password = req.getParameter(Authentication.PARAM_PASSWORD);
+		String email = req.getParameter(Authentication.PARAM_EMAIL);
 		
-		if (!ServicesTools.nullChecker(username, password)) {
-			anwser = Authentication.login(username, password);
+		if (!ServicesTools.nullChecker(username, password, email)) {
+			anwser = Authentication.register(username, password, email);
 		} else {
 			anwser = ServicesTools.createJSONError(ServerErrors.MISSING_ARGUMENT);
 		}
@@ -34,5 +36,4 @@ public class Login extends HttpServlet {
 		out.write(anwser.toString());
 		resp.setContentType("text/plain");
 	}
-	
 }

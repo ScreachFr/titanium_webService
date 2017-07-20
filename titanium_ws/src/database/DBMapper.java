@@ -27,7 +27,9 @@ public class DBMapper {
 	//private final static String DATE_PATTERN = "HH:mm:ss dd/MM/YY"; //postgres
 	public final static String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss"; //mysql
 	public final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(DATE_PATTERN);
-
+	
+	private final static String DB_PARAMETERS = "?autoReconnect=true&useSSL=false";
+	
 	public final static String JDBC_CLASS = "com.mysql.jdbc.Driver";
 
 	private static Connection crtConnection;
@@ -41,11 +43,11 @@ public class DBMapper {
 		} catch (ClassNotFoundException e) {
 			Debug.display_stack(e);
 		}
-
+		
 		if (crtConnection == null)
-			crtConnection = DriverManager.getConnection("jdbc:mysql://" + DBSettings.HOST + ":" + DBSettings.PORT + "/" + DBSettings.DATABASE,
+			crtConnection = DriverManager.getConnection("jdbc:mysql://" + DBSettings.HOST + ":" + DBSettings.PORT + "/" + DBSettings.DATABASE + DB_PARAMETERS,
 					DBSettings.LOGIN, DBSettings.PASSWORD);
-
+		
 		return crtConnection;
 	}
 
@@ -82,11 +84,15 @@ public class DBMapper {
 			return result;
 
 		} catch (SQLException e) {
+			Debug.display_stack(e);
 			throw new QueryFailedException(e);
 		}
 
 	}
 
+	public static boolean exists(ResultSet rs) throws SQLException {
+		return rs.next();
+	}
 
 	/**
 	 * Return current time. This method is in DBMapper to be sure it's use with database interactions. 
@@ -116,17 +122,6 @@ public class DBMapper {
 
 	public enum QueryType {
 		SELECT, UPDATE, DELETE, INSERT;
-	}
-
-	public static void main(String[] args) {
-		try {
-			getMySQLConnection();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		System.out.println(getTimeNow());
 	}
 
 }

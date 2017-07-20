@@ -1,10 +1,13 @@
 # Login
 
 ## URL
-```/user/login```
+```/user/logout```
 
 ## Description
-Login service.
+Logout service.
+
+## Method
+GET
 
 ## Input parameters
 `username` 
@@ -17,7 +20,7 @@ JSON
 
 ## Output example
 ```JSON
-{"success" : true, "key" : "efknsldfn1dq35de1sedsef1"} 
+{"success" : true} 
 {"errorCode" : 1001, "errorMessage" : "Wrong username/password"}
 ```
 
