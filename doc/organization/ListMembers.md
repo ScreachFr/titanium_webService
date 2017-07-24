@@ -1,7 +1,7 @@
 # List Orgnaization Members
 
 ## URL
-```/org/listmembers```
+```/org/members/list```
 
 ## Description
 List every member of an organization.
@@ -20,13 +20,16 @@ JSON
 
 ## Output example
 ```JSON
-{“success” : true,
-    "1" : "Member name 1",
-    "5" : "Member name 2",
-    "48" : "Member name 3",
-    "21" : "Member name 4"
+{
+    "success" : true,
+    "members" : [
+        {"id" : 5, "username" : "Member name 1"},
+        {"id" : 24, "username" : "Member name 2"},
+        {"id" : 186, "username" : "Member name 3"},
+        {"id" : 2455, "username" : "Member name 4"}
+    ]
 } 
-{"errorCode" : 1, "errorMessage" : "Error description"}
+{"errorCode" : 3001, "errorMessage" : "Permission denied (ownership required)."}
 ```
 
 ## Errors

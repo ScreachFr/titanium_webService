@@ -1,7 +1,7 @@
 # Add a Member to Organization
 
 ## URL
-```/org/removemember```
+```/org/members/remove```
 
 ## Description
 Remove an user from the organization.

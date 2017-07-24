@@ -19,14 +19,10 @@ JSON
 ```JSON
 {
     "success" : true,
-    1 : {
-        "name" : "organisation name 1",
-        "owner" : "2"
-    },
-    5 : {
-        "name" : "organisation name 2",
-        "owner" : "3"
-    },
+    "organizations" : [
+        {"id" : 2, "name" : "Organization name 1", "owner" : "3"},
+        {"id" : 6, "name" : "Organization name 2", "owner" : "6"}
+    ]
 } 
 
 {"errorCode" : -1, "errorMessage" : "Invalid key"}
@@ -39,10 +35,4 @@ JSON
 ```services.organizations.*```
 
 ## Note
-```json
-1 : {
-        "name" : "organisation name 1",
-        "owner" : "5"
-}
-```
-`1` is the organization id. This id is unique and shall be used as the server absolute identity.
+None

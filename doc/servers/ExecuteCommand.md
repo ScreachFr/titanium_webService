@@ -16,8 +16,6 @@ GET
 
 `command` Command to execute with arguments.
 
-`wait` A boolean values that indicates if an answer is expected.
-
 `timeout` How much time time in ms shall the servlet wait for an answer.
 
 ## Output type
