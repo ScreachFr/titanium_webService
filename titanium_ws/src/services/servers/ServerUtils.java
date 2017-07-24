@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import database.DBMapper;
@@ -32,6 +35,9 @@ public class ServerUtils {
 	// Edit server
 	private final static String QUERY_EDIT_SERVER = "UPDATE servers SET host = ?, port = ?, password = ?, name = ? WHERE idserver = ?;";
 
+	// List servers
+	private final static String QUERY_LIST_SERVERS = "SELECT * FROM servers WHERE owner = ?;";
+	
 	private final static String QUERY_GET_SERVER = "SELECT * FROM servers WHERE idserver = ?;";
 
 	public static JSONObject addServer(String key, int idOrga, String name, String host, int port, String password) {
@@ -195,7 +201,64 @@ public class ServerUtils {
 
 		return answer;
 	}
+	
+	public static JSONObject listServers(String key, int idOrga) {
+		JSONObject answer;
+		
+		try {
+			if (Authentication.validateAndRefreshKey(key)) {
+				int idUser = Authentication.getIdUserFromKey(key);
+				if (OrganizationUtils.isMember(idUser, idOrga) || OrganizationUtils.hasOwnership(idUser, idOrga)) {
+					List<Server> servers = getServerListByOrganization(idOrga);
+					
+					answer = ServicesTools.createPositiveAnswer();
+					
+					JSONArray serverList = new JSONArray();
+					
+					for (Server server : servers) {
+						JSONObject crt = new JSONObject();
+						crt.put("id", server.getId());
+						crt.put("name", server.getName());
+						crt.put("address", server.getAddress() + ":" + server.getPort());
+						
+						serverList.put(crt);
+					}
+					
+					answer.put("servers", serverList);
+				} else {
+					answer = ServicesTools.createJSONError(OrgaErrors.MEMBERSHIP_REQ);
+				}
+			} else {
+				answer = ServicesTools.createInvalidKeyError();
+			}
+		} catch (CannotConnectToDatabaseException | QueryFailedException | SQLException e) {
+			answer = ServicesTools.createDatabaseError(e);
+		}
+		
+		return answer;
+	}
 
+	private static List<Server> getServerListByOrganization(int idOrga) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
+		ArrayList<Server> result = new ArrayList<>();
+		String name, address, password;
+		int id, port;
+		Server s;
+		
+		ResultSet resultSet = DBMapper.executeQuery(QUERY_LIST_SERVERS, QueryType.SELECT, idOrga);
+		
+		while (resultSet.next()) {
+			id = resultSet.getInt(1);
+			address = resultSet.getString(3);
+			port = resultSet.getInt(4);
+			password = resultSet.getString(5);
+			name = resultSet.getString(6);
+			s = new Server(id, name, address, port, password);
+			result.add(s);
+		}
+		
+		return result;
+	}
+	
 	private static boolean isNameInUse(String name, int idOrga) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		return DBMapper.exists(DBMapper.executeQuery(QUERY_CHECK_NAME, QueryType.SELECT, name, idOrga));
 	}
@@ -212,7 +275,7 @@ public class ServerUtils {
 		ResultSet rs = DBMapper.executeQuery(QUERY_GET_SERVER, QueryType.SELECT, idServer);
 
 		if (rs.next()) {
-			Server result = new Server(rs.getString(6),
+			Server result = new Server(rs.getInt(1), rs.getString(6),
 					rs.getString(3), rs.getInt(4), rs.getString(5));
 
 			return result;
@@ -243,7 +306,6 @@ public class ServerUtils {
 
 		return OrganizationUtils.isMember(idUser, idOrga) || OrganizationUtils.hasOwnership(idUser, idOrga);
 	}
-
 }
 
 

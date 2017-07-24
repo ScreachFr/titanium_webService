@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import database.DBMapper;
@@ -112,15 +113,15 @@ public class OrganizationUtils {
 
 				answer = ServicesTools.createPositiveAnswer();
 
+				JSONArray orgas = new JSONArray();
 				for (Organization org : orgs) {
 					JSONObject data = new JSONObject();
-
+					data.put("id", org.getId());
 					data.put("name", org.getName());
 					data.put("owner", org.getOwner().getId());
-
-					answer.put(org.getId()+"", data);
+					orgas.put(data);
 				}
-
+				answer.put("organizations", orgas);
 
 			} else {
 				answer = ServicesTools.createInvalidKeyError();
@@ -211,12 +212,21 @@ public class OrganizationUtils {
 
 					answer = ServicesTools.createPositiveAnswer();
 
-					answer.put(idOwner +"", Authentication.getUserFromId(idOwner).getUsername());
-
+					
+					JSONArray userArray = new JSONArray();
+					JSONObject crt = new JSONObject();
+					crt.put("id", idOwner);
+					crt.put("username", Authentication.getUserFromId(idOwner).getUsername());
+					userArray.put(crt);
+					
 					for (User user : users) {
-						answer.put(user.getId() + "", user.getUsername());
+						crt = new JSONObject();
+						crt.put("id", user.getId());
+						crt.put("username", user.getUsername());
+						userArray.put(crt);
 					}
-
+					
+					answer.put("members", userArray);
 
 				} else {
 					answer = ServicesTools.createJSONError(OrgaErrors.OWNERSHIP_REQ);

@@ -5,12 +5,79 @@
 	
 	<!-- Name binding -->
 
+	<!-- Authentication -->
 	<servlet> 
 		<servlet-name>Login</servlet-name> 
 		<servlet-class>services.auth.Login</servlet-class> 
 	</servlet>
 
+	<servlet> 
+		<servlet-name>Register</servlet-name> 
+		<servlet-class>services.auth.Register</servlet-class> 
+	</servlet>
+	
+	<servlet> 
+		<servlet-name>Logout</servlet-name> 
+		<servlet-class>services.auth.Logout</servlet-class> 
+	</servlet>
 
+	
+	<!-- Organization -->
+	<servlet> 
+		<servlet-name>AddMember</servlet-name> 
+		<servlet-class>services.organization.AddMember</servlet-class> 
+	</servlet>
+	<servlet> 
+		<servlet-name>Create</servlet-name> 
+		<servlet-class>services.organization.Create</servlet-class> 
+	</servlet>
+	<servlet> 
+		<servlet-name>List</servlet-name> 
+		<servlet-class>services.organization.List</servlet-class> 
+	</servlet>
+	<servlet> 
+		<servlet-name>ListMembers</servlet-name> 
+		<servlet-class>services.organization.ListMembers</servlet-class> 
+	</servlet>
+	<servlet> 
+		<servlet-name>RemoveOrga</servlet-name> 
+		<servlet-class>services.organization.Remove</servlet-class> 
+	</servlet>
+	<servlet> 
+		<servlet-name>RemoveMember</servlet-name> 
+		<servlet-class>services.organization.RemoveMember</servlet-class> 
+	</servlet>
+	<servlet> 
+		<servlet-name>TransferOwnership</servlet-name> 
+		<servlet-class>services.organization.TransferOwnership</servlet-class> 
+	</servlet>
+	
+	<!-- Servers -->
+	<servlet> 
+		<servlet-name>AddServer</servlet-name> 
+		<servlet-class>services.servers.AddServer</servlet-class> 
+	</servlet>
+	<servlet> 
+		<servlet-name>CheckConnection</servlet-name> 
+		<servlet-class>services.servers.CheckConnection</servlet-class> 
+	</servlet>
+	<servlet> 
+		<servlet-name>EditServer</servlet-name> 
+		<servlet-class>services.servers.EditServer</servlet-class> 
+	</servlet>
+	<servlet> 
+		<servlet-name>ExecuteCommand</servlet-name> 
+		<servlet-class>services.servers.ExecuteCommand</servlet-class> 
+	</servlet>
+	<servlet> 
+		<servlet-name>RemoveServer</servlet-name> 
+		<servlet-class>services.servers.RemoveServer</servlet-class> 
+	</servlet>
+	<servlet> 
+		<servlet-name>ListServers</servlet-name> 
+		<servlet-class>services.servers.ListServers</servlet-class> 
+	</servlet>
+	
 	<!-- Template
 	
 	<servlet> 
@@ -24,11 +91,79 @@
 	
 	<!-- URL Mapping -->
 	
-	
+	<!-- Authentication -->
 	<servlet-mapping> 
 		<servlet-name>Login</servlet-name> 
 		<url-pattern>/user/login</url-pattern> 
 	</servlet-mapping>
+	
+	<servlet-mapping> 
+		<servlet-name>Register</servlet-name> 
+		<url-pattern>/user/register</url-pattern> 
+	</servlet-mapping>
+	
+	<servlet-mapping> 
+		<servlet-name>Logout</servlet-name> 
+		<url-pattern>/user/logout</url-pattern> 
+	</servlet-mapping>
+	
+	<!-- Organization -->
+	<servlet-mapping> 
+		<servlet-name>AddMember</servlet-name> 
+		<url-pattern>/org/addmember</url-pattern> 
+	</servlet-mapping>
+	<servlet-mapping> 
+		<servlet-name>Create</servlet-name> 
+		<url-pattern>/org/create</url-pattern> 
+	</servlet-mapping>
+	<servlet-mapping> 
+		<servlet-name>List</servlet-name> 
+		<url-pattern>/org/list</url-pattern> 
+	</servlet-mapping>
+	<servlet-mapping> 
+		<servlet-name>ListMembers</servlet-name> 
+		<url-pattern>/org/members/list</url-pattern> 
+	</servlet-mapping>
+	<servlet-mapping> 
+		<servlet-name>RemoveOrga</servlet-name> 
+		<url-pattern>/org/remove</url-pattern> 
+	</servlet-mapping>
+	<servlet-mapping> 
+		<servlet-name>RemoveMember</servlet-name> 
+		<url-pattern>/org/members/remove</url-pattern> 
+	</servlet-mapping>
+	<servlet-mapping> 
+		<servlet-name>TransferOwnership</servlet-name> 
+		<url-pattern>/org/transfer</url-pattern> 
+	</servlet-mapping>
+	
+	<!-- Servers -->
+	<servlet-mapping> 
+		<servlet-name>AddServer</servlet-name> 
+		<url-pattern>/servers/add</url-pattern> 
+	</servlet-mapping>
+	<servlet-mapping> 
+		<servlet-name>CheckConnection</servlet-name> 
+		<url-pattern>/servers/check</url-pattern> 
+	</servlet-mapping>
+	<servlet-mapping> 
+		<servlet-name>EditServer</servlet-name> 
+		<url-pattern>/servers/edit</url-pattern> 
+	</servlet-mapping>
+	<servlet-mapping> 
+		<servlet-name>ExecuteCommand</servlet-name> 
+		<url-pattern>/servers/exec</url-pattern> 
+	</servlet-mapping>
+	<servlet-mapping> 
+		<servlet-name>RemoveServer</servlet-name> 
+		<url-pattern>/servers/remove</url-pattern> 
+	</servlet-mapping>
+	<servlet-mapping> 
+		<servlet-name>ListServers</servlet-name> 
+		<url-pattern>/servers/list</url-pattern> 
+	</servlet-mapping>
+	
+	
 	
 	<!-- Template
 	<servlet-mapping> 

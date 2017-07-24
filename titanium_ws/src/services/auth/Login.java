@@ -19,19 +19,19 @@ public class Login extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		JSONObject anwser = new JSONObject();
+		JSONObject answer = new JSONObject();
 		
-		String username = req.getParameter(Authentication.PARAM_USERNAME);
-		String password = req.getParameter(Authentication.PARAM_PASSWORD);
+		String username = req.getParameter(ServicesTools.USERNAME_ARG);
+		String password = req.getParameter(ServicesTools.PASSWORD_ARG);
 		
 		if (!ServicesTools.nullChecker(username, password)) {
-			anwser = Authentication.login(username, password);
+			answer = Authentication.login(username, password);
 		} else {
-			anwser = ServicesTools.createJSONError(ServerErrors.MISSING_ARGUMENT);
+			answer = ServicesTools.createJSONError(ServerErrors.MISSING_ARGUMENT);
 		}
 		
 		PrintWriter out = resp.getWriter();
-		out.write(anwser.toString());
+		out.write(answer.toString());
 		resp.setContentType("text/plain");
 	}
 	

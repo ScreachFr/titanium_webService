@@ -14,6 +14,7 @@ public class Server extends Observable {
 	private String address;
 	private int port;
 	private String password;
+	private int id;
 
 	// Network
 	private RconClient rcon;
@@ -27,7 +28,8 @@ public class Server extends Observable {
 	private String currentMap;
 	private String nextMap;
 	
-	public Server(String name, String address, int port, String password) {
+	public Server(int id, String name, String address, int port, String password) {
+		this.id = id;
 		this.name = name;
 		this.address = address;
 		this.port = port;
@@ -90,6 +92,10 @@ public class Server extends Observable {
 		} catch (IOException e) {
 			System.out.println("Execution failed : " + e.getMessage());
 		}
+	}
+	
+	public int getId() {
+		return id;
 	}
 	
 	public String getAddress() {

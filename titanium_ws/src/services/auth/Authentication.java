@@ -13,16 +13,17 @@ import database.DBMapper.QueryType;
 import database.exceptions.CannotConnectToDatabaseException;
 import database.exceptions.QueryFailedException;
 import services.ServicesTools;
+import services.errors.ServerErrors;
 
 public class Authentication {
 	// Register queries
-	private final static String QUERY_CHECK_USERNAME = "SELECT username FROM users WHERE username = ?;";
+	private final static String QUERY_CHECK_USERNAME = "SELECT username FROM users WHERE username = LOWER(?);";
 	private final static String QUERY_CHECK_EMAIL = "SELECT username FROM users WHERE email = ?;";
-	private final static String QUERY_INSERT_USER = "INSERT INTO users VALUES (DEFAULT, ?, SHA2(?, 256), ?, ?);";
+	private final static String QUERY_INSERT_USER = "INSERT INTO users VALUES (DEFAULT, LOWER(?), SHA2(?, 256), ?, ?);";
 
 	// Login queries
-	private final static String QUERY_GET_SALT = "SELECT salt FROM users WHERE username = ?;";
-	private final static String QUERY_LOGIN = "SELECT * FROM users WHERE username = ? AND password = SHA2(?, 256);";
+	private final static String QUERY_GET_SALT = "SELECT salt FROM users WHERE username = LOWER(?);";
+	private final static String QUERY_LOGIN = "SELECT * FROM users WHERE username = LOWER(?) AND password = SHA2(?, 256);";
 	private final static String QUERY_KEY_EXISTS = "SELECT * FROM `keys` WHERE token = ?;";
 	private final static String QUERY_INSERT_KEY = "INSERT INTO `keys` VALUES (?, ?, ?)";
 	private final static String QUERY_DELETE_KEY = "DELETE FROM `keys` WHERE iduser = ?;";
@@ -38,10 +39,6 @@ public class Authentication {
 
 	public final static String LABEL_SALT = "salt";
 	public final static int LABEL_IDUSER = 1;
-
-	public final static String PARAM_USERNAME = "username";
-	public final static String PARAM_PASSWORD = "password";
-	public final static String PARAM_EMAIL = "email";
 
 	public final static int MIN_USERNAME_LENGTH = 6;
 	public final static int MIN_PASSWORD_LENGTH = 6;
@@ -119,6 +116,26 @@ public class Authentication {
 		return answer;
 	}
 
+	public static JSONObject logout(String key) {
+		JSONObject answer;
+		
+		try {
+			if (isKeyValid(key)) {
+				int idUser = getIdUserFromKey(key);
+				removeKeyByIdUser(idUser);
+				
+				answer = ServicesTools.createPositiveAnswer();
+			} else {
+				answer = ServicesTools.createJSONError(ServerErrors.INVALID_KEY);
+			}
+		} catch (CannotConnectToDatabaseException | QueryFailedException | SQLException e) {
+			answer = ServicesTools.createDatabaseError(e);
+		}
+		
+		
+		return answer;
+	}
+	
 	private static boolean isUsernameInUse(String username) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		ResultSet result = DBMapper.executeQuery(QUERY_CHECK_USERNAME, QueryType.SELECT, username);
 

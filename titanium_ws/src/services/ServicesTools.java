@@ -20,8 +20,19 @@ import utils.Debug;
 public class ServicesTools {
 	//Common args name.
 	public final static String KEY_ARG			= "key";
-	public final static String USER_ID_ARG		= "userid";
-
+	public final static String IDORGA_ARG 		= "idorga";
+	public final static String IDUSER_ARG 		= "iduser";
+	public final static String USERNAME_ARG 	= "username";
+	public final static String PASSWORD_ARG 	= "password";
+	public final static String EMAIL_ARG 		= "email";
+	public final static String NAME_ARG 		= "name";
+	public final static String HOST_ARG 		= "host";
+	public final static String PORT_ARG 		= "port";
+	public final static String IDSERVER_ARG		= "idserver";
+	public final static String COMMAND_ARG 		= "command";
+	public final static String TIMEOUT_ARG 		= "timeout";
+	
+	
 	/**
 	 * Check if there's a null in params.
 	 * @param objs
