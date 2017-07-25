@@ -78,13 +78,17 @@
 		<servlet-class>services.servers.ListServers</servlet-class> 
 	</servlet>
 	
-	<!-- Template
+	<!-- Diag -->
+	<servlet> 
+		<servlet-name>CheckDatabase</servlet-name> 
+		<servlet-class>services.diag.CheckDatabase</servlet-class> 
+	</servlet>
 	
+	<!-- Template
 	<servlet> 
 		<servlet-name>NAME</servlet-name> 
 		<servlet-class>CLASS</servlet-class> 
 	</servlet>
-	
 	 -->
 	
 	
@@ -163,7 +167,11 @@
 		<url-pattern>/servers/list</url-pattern> 
 	</servlet-mapping>
 	
-	
+	<!-- Diag -->
+	<servlet-mapping> 
+		<servlet-name>CheckDatabase</servlet-name> 
+		<url-pattern>/diag/database</url-pattern> 
+	</servlet-mapping>
 	
 	<!-- Template
 	<servlet-mapping> 

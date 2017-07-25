@@ -12,7 +12,6 @@ import org.json.JSONObject;
 import database.DataBaseErrors;
 import database.exceptions.CannotConnectToDatabaseException;
 import database.exceptions.QueryFailedException;
-import services.auth.AuthErrors;
 import services.errors.ServerErrors;
 import services.errors.ServletError;
 import utils.Debug;

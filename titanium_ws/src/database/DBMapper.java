@@ -1,6 +1,7 @@
 package database;
 
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,9 +11,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.json.JSONException;
 
 import database.exceptions.CannotConnectToDatabaseException;
 import database.exceptions.QueryFailedException;
+import utils.CannotLoadConfigException;
+import utils.ConfigLoader;
 import utils.Debug;
 
 
@@ -28,7 +32,8 @@ public class DBMapper {
 	public final static String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss"; //mysql
 	public final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(DATE_PATTERN);
 	
-	private final static String DB_PARAMETERS = "?autoReconnect=true&useSSL=false";
+	private final static String DB_PARAMETERS = "?autoReconnect=true";
+	private final static String DB_NOT_SSL = "useSSL=false";
 	
 	public final static String JDBC_CLASS = "com.mysql.jdbc.Driver";
 
@@ -37,16 +42,30 @@ public class DBMapper {
 	public final static int DUPLICATE_P_KEY_ERROR_CODE = 1062;
 
 
-	public static Connection getMySQLConnection() throws SQLException {
+	public static Connection getMySQLConnection() throws SQLException, CannotLoadConfigException {
 		try {
 			Class.forName(JDBC_CLASS);
 		} catch (ClassNotFoundException e) {
 			Debug.display_stack(e);
 		}
 		
-		if (crtConnection == null)
-			crtConnection = DriverManager.getConnection("jdbc:mysql://" + DBSettings.HOST + ":" + DBSettings.PORT + "/" + DBSettings.DATABASE + DB_PARAMETERS,
-					DBSettings.LOGIN, DBSettings.PASSWORD);
+		if (crtConnection == null) {
+			try {
+			String host = ConfigLoader.getVar(ConfigLoader.DB_HOST);
+			String port = ConfigLoader.getVar(ConfigLoader.DB_PORT);
+			String db = ConfigLoader.getVar(ConfigLoader.DB_DATABASE);
+			String login = ConfigLoader.getVar(ConfigLoader.DB_LOGIN);
+			String pwd = ConfigLoader.getVar(ConfigLoader.DB_PASSWORD);
+			String params = DB_PARAMETERS;
+			String useSSL = (Boolean.parseBoolean(ConfigLoader.getVar(ConfigLoader.DB_USE_SSL))) ? "" : "&" + DB_NOT_SSL;
+			
+			String result = "jdbc:mysql://" + host + ":" + port + "/" + db + params + useSSL;
+			
+			crtConnection = DriverManager.getConnection(result, login, pwd);
+			} catch (JSONException | IOException e) {
+				throw new CannotLoadConfigException();
+			} 
+		}
 		
 		return crtConnection;
 	}
@@ -63,7 +82,10 @@ public class DBMapper {
 			database = getMySQLConnection();
 		} catch (SQLException e1) {
 			Debug.display_stack(e1);
-			throw new CannotConnectToDatabaseException();
+			throw new CannotConnectToDatabaseException("Sql exception");
+		} catch(CannotLoadConfigException e1) {
+			Debug.display_stack(e1);
+			throw new CannotConnectToDatabaseException("Cannot load config file.");
 		}
 
 		try {
