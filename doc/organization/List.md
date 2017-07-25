@@ -20,8 +20,8 @@ JSON
 {
     "success" : true,
     "organizations" : [
-        {"id" : 2, "name" : "Organization name 1", "owner" : "3"},
-        {"id" : 6, "name" : "Organization name 2", "owner" : "6"}
+        {"id" : 2, "name" : "Organization name 1", "owner" : 3},
+        {"id" : 6, "name" : "Organization name 2", "owner" : 6}
     ]
 } 
 
