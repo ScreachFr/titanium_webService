@@ -68,13 +68,4 @@ public class UserUtils {
 	private static int getOffset(int pageNumber, int pageSize) {
 		return pageNumber * pageSize;
 	}
-	public static void main(String[] args) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
-		JSONObject json = Authentication.login("testuser", "password");
-		
-		String key = json.getString("key");
-		
-		
-		System.out.println(search(key, "test", 0, 10));
-		
-	}
 }
