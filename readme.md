@@ -151,3 +151,7 @@ Put `config.json` (available in `installation/`) in `/opt/titanium_ws/`.
 
 ### Windows
 Well lets say it's not supported yet.
+
+___
+## Contacts and Bug Report
+If you don't want to open a thread on Github you can contact me via twitter [@Screach_FR](https://twitter.com/Screach_FR) or discord Screach#9203.
