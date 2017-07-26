@@ -12,27 +12,120 @@ ___
 
 ## Usage
 The first thing you need to do is to create an account :
-```
+
+`
 titanium_ws_path/user/register?username=fancyusername&password=1337pwd&email=noidea@mail.com
-answer :
+`
+
+Result :
+```json
 {"success":true}
 ```
 Now that you have an account you can get an authentication key :
-```
-titanium_ws_path/user/login/username=fancyusername&password=1337pwd
+`titanium_ws_path/user/login/username=fancyusername&password=1337pwd`
+
+Result :
+```json
 {"success":true,"key":"1f4c655c895b4a238242788b6422038f"}
 ```
 Let's create an organization now :
-```
+
+`
 titanium_ws_path/org/create?key=1f4c655c895b4a238242788b6422038f&name=cypher
+`
+
+Result :
+```json
 {"success":true}
 ```
 
-// TODO add member research 
+Once your organization is created you can add member. To do so you first need to search for user you want to add to your organization : 
 
-// TODO add server
+`
+titanium_ws_path/user/search?key=1f4c655c895b4a238242788b6422038f&query=bff&page=0&size=10
+`
 
-// TODO command execution
+Result :
+```json
+{
+    "success":true,
+    "result":{
+        "size":10,
+        "page":0,
+        "users":[
+            {"id":1,"username":"notmybff"},
+            {"id":3,"username":"bff4ever"}
+        ]
+    }
+}
+```
+__Note__ : Only the organization's owner can do such things.
+
+Now list your organization with :
+
+`
+titanium_ws_path/org/list?key=1f4c655c895b4a238242788b6422038f
+`
+
+Result :
+```json
+{
+    "success" : true,
+    "organizations" : [
+        {"id" : 2, "name" : "Organization name 1", "owner" : 3},
+        {"id" : 6, "name" : "cypher", "owner" : 6}
+    ]
+} 
+```
+
+
+You can add member with the following request :
+
+`
+titanium_ws_path/org/addmember?key=1f4c655c895b4a238242788b6422038f&idorga=6&isuser=3
+`
+
+Result :
+```json
+{"success":true}
+```
+
+Now that everything is setup correctly you can add servers to your organization : 
+
+`titanium_ws_path/org/addmember?key=1f4c655c895b4a238242788b6422038f&idorga=6name=top Server&host=impot.gouv.fr&port=42666&password=t0ps3cr3t`
+
+Result :
+```json
+{"success":true}
+```
+
+__Note__ : Only the organization's owner can do such things.
+
+List your servers with :
+
+`titanium_ws_path/servers/list?key=1f4c655c895b4a238242788b6422038f&idorga=6`
+
+Result :
+```json
+{
+    "success" : true,
+    "servers" : [
+        {"id" : 5, "name" : "top Server", "address" : "impot.gouv.fr:42666"},
+    ]
+} 
+```
+
+You can finaly execute a command on a server by sending this :
+
+`titanium_ws_path/servers/exec?key=1f4c655c895b4a238242788b6422038f&idserver=5&command=adminbroadcast testbc`
+
+Result :
+```JSON
+{
+    "success" : true,
+    "answer" : "[CHAT Broadcast] testbc"
+} 
+```
 ___
 
 ## Installation
