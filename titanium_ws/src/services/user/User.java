@@ -1,4 +1,4 @@
-package services.auth;
+package services.user;
 
 public class User {
 	private int id;

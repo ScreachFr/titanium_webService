@@ -14,7 +14,7 @@ import database.exceptions.CannotConnectToDatabaseException;
 import database.exceptions.QueryFailedException;
 import services.ServicesTools;
 import services.auth.Authentication;
-import services.auth.User;
+import services.user.User;
 
 public class OrganizationUtils {
 	// Create organization

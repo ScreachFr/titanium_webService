@@ -30,7 +30,9 @@ public class ServicesTools {
 	public final static String IDSERVER_ARG		= "idserver";
 	public final static String COMMAND_ARG 		= "command";
 	public final static String TIMEOUT_ARG 		= "timeout";
-	
+	public final static String SIZE_ARG 		= "size";
+	public final static String PAGE_ARG 		= "page";
+	public final static String QUERY_ARG 		= "query";
 	
 	/**
 	 * Check if there's a null in params.

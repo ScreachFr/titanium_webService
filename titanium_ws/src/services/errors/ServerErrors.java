@@ -1,9 +1,9 @@
 package services.errors;
 
 public enum ServerErrors implements ServletError {
-	MISSING_ARGUMENT(new GenericError(-1, "Missing argument(s)")),
-	BAD_ARGUMENT(new GenericError(-2, "Invalid argument(s)")),
-	INVALID_KEY(new GenericError(-3, "Invalid key"));
+	MISSING_ARGUMENT(new GenericError(1001, "Missing argument(s)")),
+	BAD_ARGUMENT(new GenericError(1002, "Invalid argument(s)")),
+	INVALID_KEY(new GenericError(1003, "Invalid key"));
 	
 	private GenericError error;
 	

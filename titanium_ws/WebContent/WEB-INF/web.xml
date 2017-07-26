@@ -84,6 +84,12 @@
 		<servlet-class>services.diag.CheckDatabase</servlet-class> 
 	</servlet>
 	
+	<!-- Users -->
+	<servlet> 
+		<servlet-name>SearchUser</servlet-name> 
+		<servlet-class>services.user.SearchUser</servlet-class> 
+	</servlet>
+	
 	<!-- Template
 	<servlet> 
 		<servlet-name>NAME</servlet-name> 
@@ -171,6 +177,12 @@
 	<servlet-mapping> 
 		<servlet-name>CheckDatabase</servlet-name> 
 		<url-pattern>/diag/database</url-pattern> 
+	</servlet-mapping>
+	
+	<!-- Users -->
+	<servlet-mapping> 
+		<servlet-name>SearchUser</servlet-name> 
+		<url-pattern>/user/search</url-pattern> 
 	</servlet-mapping>
 	
 	<!-- Template

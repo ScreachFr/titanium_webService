@@ -14,6 +14,7 @@ import database.exceptions.CannotConnectToDatabaseException;
 import database.exceptions.QueryFailedException;
 import services.ServicesTools;
 import services.errors.ServerErrors;
+import services.user.User;
 
 public class Authentication {
 	// Register queries

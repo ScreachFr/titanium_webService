@@ -1,6 +1,6 @@
 package services.organization;
 
-import services.auth.User;
+import services.user.User;
 
 public class Organization {
 	private int id;
