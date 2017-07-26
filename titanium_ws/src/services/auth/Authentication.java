@@ -49,6 +49,12 @@ public class Authentication {
 	public final static int MAX_EMAIL_LENGTH = 45;
 	public final static String EMAIL_REGEX = "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
 
+	/**
+	 * Create an authentication key.
+	 * @param username User name.
+	 * @param password User password.
+	 * @return Authentication key or Error message.
+	 */
 	public static JSONObject login(String username, String password) {
 		JSONObject answer;
 
@@ -62,21 +68,21 @@ public class Authentication {
 			} else {
 				ResultSet result = DBMapper.executeQuery(QUERY_LOGIN, QueryType.SELECT, username, password + salt);
 
-				if (result.next()) {
+				if (result.next()) { // username and password+salt combination exists.
 					String key = newKey();
 
-					removeKeyByIdUser(result.getInt(LABEL_IDUSER));
+					// Removes old key
+					removeKeyByIdUser(result.getInt(LABEL_IDUSER)); 
 
+					// Puts new key in db.
 					DBMapper.executeQuery(QUERY_INSERT_KEY, QueryType.INSERT, key, result.getInt(LABEL_IDUSER), DBMapper.getTimeNow());
-
+					
 					answer = ServicesTools.createPositiveAnswer();
 					answer.put(ServicesTools.KEY_ARG, key);
 				} else {
 					answer = ServicesTools.createJSONError(AuthErrors.WRONG_USERNAME_OR_PASSWORD);
 				}
 			}
-
-
 		} catch (CannotConnectToDatabaseException | QueryFailedException | SQLException e) {
 			answer = ServicesTools.createDatabaseError(e);
 		}
@@ -84,6 +90,13 @@ public class Authentication {
 		return answer;
 	}
 
+	/**
+	 * Creates a new user.
+	 * @param username New user name.
+	 * @param password New user password.
+	 * @param email New user mail.
+	 * @return Success or error message.
+	 */
 	public static JSONObject register(String username, String password, String email) {
 		JSONObject answer;
 
@@ -117,6 +130,11 @@ public class Authentication {
 		return answer;
 	}
 
+	/**
+	 * Delete an authentication key from database.
+	 * @param key Key to delete.
+	 * @return Success or error message.
+	 */
 	public static JSONObject logout(String key) {
 		JSONObject answer;
 		
@@ -137,19 +155,32 @@ public class Authentication {
 		return answer;
 	}
 	
+	/**
+	 * Is this username in use by another user ?
+	 */
 	private static boolean isUsernameInUse(String username) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		ResultSet result = DBMapper.executeQuery(QUERY_CHECK_USERNAME, QueryType.SELECT, username);
 
 		return result.next();
 	}
 
+	/**
+	 * Is this email in use by another user ?
+	 */
 	private static boolean isEmailInUse(String email) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		ResultSet result = DBMapper.executeQuery(QUERY_CHECK_EMAIL, QueryType.SELECT, email);
 
 		return result.next();
 	}
 
-	public static JSONObject addUserToDB(String username, String password, String email) {
+	/**
+	 * Add a new user to database.
+	 * @param username User name.
+	 * @param password User password.
+	 * @param email User email.
+	 * @return Json answer.
+	 */
+	private static JSONObject addUserToDB(String username, String password, String email) {
 		JSONObject answer;
 
 		String salt = newSalt();
@@ -164,12 +195,20 @@ public class Authentication {
 		return answer;
 	}
 
+	/**
+	 * Create a new salt.
+	 * @return salt.
+	 */
 	public static String newSalt() {
 		String result = UUID.randomUUID().toString();
 		result = result.replaceAll("-", "").substring(16);
 		return result;
 	}
 
+	/**
+	 * Returns user's salt.
+	 * @return User's salt. This value may be null.
+	 */
 	private static String getSalt(String username) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		ResultSet resultSet = DBMapper.executeQuery(QUERY_GET_SALT, QueryType.SELECT, username);
 
@@ -178,25 +217,40 @@ public class Authentication {
 		else
 			return resultSet.getString(LABEL_SALT);
 	}
-
+	
+	/**
+	 * Create a new key and make sure it's not already in database.
+	 * @return New key.
+	 */
 	private static String newKey() throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		String result;		
 
-		result = UUID.randomUUID().toString().replaceAll("-", "");
 
 		ResultSet resultSet;
 
 		do {
+			result = UUID.randomUUID().toString().replaceAll("-", "");
 			resultSet = DBMapper.executeQuery(QUERY_KEY_EXISTS, QueryType.SELECT, result);
 		} while (resultSet.next());
 
 		return result;
 	}
 
+	/**
+	 * Removes a key from database.
+	 * @param idUser Id of the key owner.
+	 * @throws CannotConnectToDatabaseException
+	 * @throws QueryFailedException
+	 */
 	private static void removeKeyByIdUser(int idUser) throws CannotConnectToDatabaseException, QueryFailedException {
 		DBMapper.executeQuery(QUERY_DELETE_KEY, QueryType.DELETE, idUser);
 	}
 
+	/**
+	 * Tells you if a key is valid or not.
+	 * @param key Key to check.
+	 * @return Is the key valide ?
+	 */
 	private static boolean isKeyValid(String key) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		ResultSet resultSet = DBMapper.executeQuery(QUERY_KEY, QueryType.SELECT, key);
 
@@ -211,16 +265,30 @@ public class Authentication {
 			return true;
 	}
 
+	/**
+	 * Put the lastRefresh value to now() in database.
+	 * @param key Key to refresh.
+	 */
 	private static boolean refreshKey(String key) throws CannotConnectToDatabaseException, QueryFailedException {
 		DBMapper.executeQuery(QUERY_UPDATE_LAST_REFRESH, QueryType.UPDATE, DBMapper.getTimeNow(), key);
 
 		return true;
 	}
 
+	/**
+	 * Check if a key is valid and if it is refresh.
+	 * @param key Key to check and rehfresh.
+	 * @return Is the key valid.
+	 */
 	public static boolean validateAndRefreshKey(String key) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		return isKeyValid(key) && refreshKey(key);
 	}
 
+	/**
+	 * Returns an user id from his key.
+	 * @param key User's key.
+	 * @return Id of the key owner.
+	 */
 	public static int getIdUserFromKey(String key) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		ResultSet result = DBMapper.executeQuery(QUERY_IDUSER_KEY, QueryType.SELECT, key);
 
@@ -231,12 +299,20 @@ public class Authentication {
 
 	}
 
+	/**
+	 * Does this user id is in use ?
+	 */
 	public static boolean doesHeExists(int idUser) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		ResultSet result = DBMapper.executeQuery(QUERY_GET_USER, QueryType.SELECT, idUser);
 
 		return result.next();
 	}
 	
+	/**
+	 * Get user information from database.
+	 * @param idUser User id.
+	 * @return User information.
+	 */
 	public static User getUserFromId(int idUser) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		ResultSet resultSet = DBMapper.executeQuery(QUERY_GET_USER, QueryType.SELECT, idUser);
 		

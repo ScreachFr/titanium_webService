@@ -16,7 +16,6 @@ public class FileLoader {
 		
 		sc = new Scanner(in);
 		
-		
 		while (sc.hasNext()) 
 			result += sc.nextLine() + "\n";
 		
@@ -24,14 +23,5 @@ public class FileLoader {
 		in.close();
 		
 		return result;
-	}
-	
-	public static void main(String[] args) {
-		try {
-			System.out.println(loadFile("mapReduceFunctions/mapDF.js"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 }

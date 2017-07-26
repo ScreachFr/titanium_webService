@@ -18,7 +18,13 @@ import services.auth.Authentication;
 public class UserUtils {
 	private final static String QUERY_SEARCH_USER = "SELECT * FROM users WHERE username LIKE ? ORDER BY idusers LIMIT ? OFFSET ?;";
 	
-	
+	/**
+	 * Looks for someone in user database.
+	 * @param key Authentication key.
+	 * @param query Search query (= username you're looking for).
+	 * @param page Page number (>= 0).
+	 * @param pageSize How many results per page (> 0).
+	 */
 	public static JSONObject search(String key, String query, int page, int pageSize) {
 		JSONObject answer;
 		
@@ -52,6 +58,9 @@ public class UserUtils {
 		return answer;
 	}
 	
+	/**
+	 * Search
+	 */
 	private static List<User> getUserListFromQuery(String query, int page, int pageSize) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		List<User> result = new ArrayList<>();
 		

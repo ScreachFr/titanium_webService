@@ -9,6 +9,10 @@ import services.ServicesTools;
 import utils.CannotLoadConfigException;
 
 public class DiagUtils {
+	
+	/**
+	 * Checks if the servlet can connect to database.
+	 */
 	public static JSONObject checkDatabase() {
 		JSONObject answer;
 		

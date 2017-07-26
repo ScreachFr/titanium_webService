@@ -46,21 +46,24 @@ public class OrganizationUtils {
 	private final static String QUERY_IS_OWNER = "SELECT * FROM organizations WHERE idorga = ? AND owner = ?;";
 	private final static String QUERY_IS_MEMBER = "SELECT * FROM members WHERE idorga = ? AND iduser = ?;";
 
+	/**
+	 * Creates an organization.
+	 * @param key Authentication key.
+	 * @param name New organization name.
+	 */
 	public static JSONObject createOrganization(String key, String name) {
 		JSONObject answer;
 
 		try {
-			if (Authentication.validateAndRefreshKey(key)) {
-				if (isNameInUse(name)) {
+			if (Authentication.validateAndRefreshKey(key)) { // Key is valid.
+				if (isNameInUse(name)) { // Name is in use.
 					answer = ServicesTools.createJSONError(OrgaErrors.NAME_IN_USE);
 				} else { // Name is available.
 					int idUser = Authentication.getIdUserFromKey(key);
-
 					DBMapper.executeQuery(QUERY_INSERT_ORGA, QueryType.INSERT, idUser, name);
 
 					answer = ServicesTools.createPositiveAnswer();
 				}
-
 			} else {
 				answer = ServicesTools.createInvalidKeyError();
 			}
@@ -68,20 +71,26 @@ public class OrganizationUtils {
 			answer = ServicesTools.createDatabaseError(e);
 		}
 
-
 		return answer;
 	}
 
+	/**
+	 * Removes an organization from database. It also removes member association with this organization.
+	 * @param key Owner's key.
+	 * @param idOrga Organization to remove.
+	 */
 	public static JSONObject removeOrganization(String key, int idOrga) {
 		JSONObject answer;
 
 		try {
-			if (Authentication.validateAndRefreshKey(key)) {
+			if (Authentication.validateAndRefreshKey(key)) { // The key is valid.
 				int idUser = Authentication.getIdUserFromKey(key);
 
 				if (hasOwnership(idUser, idOrga)) {
+					// Removes members.
 					DBMapper.executeQuery(QUERY_REMOVE_MEMBERS, QueryType.DELETE, idOrga);
-					DBMapper.executeQuery(QUERY_REMOVE_ORGA, QueryType.DELETE, idOrga);
+					// Removes organization.
+					DBMapper.executeQuery(QUERY_REMOVE_ORGA, QueryType.DELETE, idOrga); 
 
 					answer = ServicesTools.createPositiveAnswer();
 				} else {
@@ -97,22 +106,26 @@ public class OrganizationUtils {
 		return answer;
 	}
 
-
+	/**
+	 * List every organization related to an user.
+	 * @param key Authentication key.
+	 */
 	public static JSONObject listOrganizations(String key) {
 		JSONObject answer;
 
 		try {
-			if (Authentication.validateAndRefreshKey(key)) {
+			if (Authentication.validateAndRefreshKey(key)) { // The key is valid.
 				int idUser = Authentication.getIdUserFromKey(key);
 				List<Organization> orgs = new ArrayList<>();
 
-
+				// Owned orgs.
 				orgs.addAll(getOwnedOrganizations(idUser));
+				// Organization his member of.
 				orgs.addAll(getOrganizationByMember(idUser));
-
 
 				answer = ServicesTools.createPositiveAnswer();
 
+				// Orgs to json.
 				JSONArray orgas = new JSONArray();
 				for (Organization org : orgs) {
 					JSONObject data = new JSONObject();
@@ -133,15 +146,21 @@ public class OrganizationUtils {
 		return answer;
 	}
 
+	/**
+	 * Add a member to an organization. Only the owner of the organization can do that.
+	 * @param key Authentication key.
+	 * @param idOrga Organization's id.
+	 * @param idUser User's id.
+	 */
 	public static JSONObject addMember(String key, int idOrga, int idUser) {
 		JSONObject answer;
 
 		try {
-			if (Authentication.validateAndRefreshKey(key)) {
+			if (Authentication.validateAndRefreshKey(key)) { // Key is Valid.
 				int idOwner = Authentication.getIdUserFromKey(key);
-				if (Authentication.doesHeExists(idUser)) {
+				if (Authentication.doesHeExists(idUser)) { // The user exists.
 					if (!isMember(idUser, idOrga)) { 
-						if (hasOwnership(idOwner, idOrga)) {
+						if (hasOwnership(idOwner, idOrga)) { // The user own the organization.
 							DBMapper.executeQuery(QUERY_ADD_MEMBER, QueryType.INSERT, idOrga, idUser);
 							answer = ServicesTools.createPositiveAnswer();
 						} else {
@@ -154,9 +173,6 @@ public class OrganizationUtils {
 				} else {
 					answer = ServicesTools.createJSONError(OrgaErrors.UKN_USER);
 				}
-
-
-
 			} else {
 				answer = ServicesTools.createInvalidKeyError();
 			}
@@ -167,13 +183,19 @@ public class OrganizationUtils {
 		return answer;
 	}
 
+	/**
+	 * Removes an user from the organization.
+	 * @param key Authentication key.
+	 * @param idOrga Organization's id.
+	 * @param idUser User's id.
+	 */
 	public static JSONObject removeMember(String key, int idOrga, int idUser) {
 		JSONObject answer;
 
 		try {
-			if (Authentication.validateAndRefreshKey(key)) {
+			if (Authentication.validateAndRefreshKey(key)) { // Key is valid.
 				int idOwner = Authentication.getIdUserFromKey(key);
-				if (Authentication.doesHeExists(idUser)) {
+				if (Authentication.doesHeExists(idUser)) { // User exists.
 					if (isMember(idUser, idOrga)) { 
 						if (hasOwnership(idOwner, idOrga)) {
 							DBMapper.executeQuery(QUERY_REMOVE_MEMBER, QueryType.INSERT, idOrga, idUser);
@@ -188,9 +210,6 @@ public class OrganizationUtils {
 				} else {
 					answer = ServicesTools.createJSONError(OrgaErrors.UKN_USER);
 				}
-
-
-
 			} else {
 				answer = ServicesTools.createInvalidKeyError();
 			}
@@ -200,25 +219,29 @@ public class OrganizationUtils {
 
 		return answer;
 	}
-
+	
+	/**
+	 * List member of an organization.
+	 * @param key Authentication key.
+	 * @param idOrga Organization's id.
+	 */
 	public static JSONObject listMembers(String key, int idOrga) {
 		JSONObject answer;
 
 		try {
-			if (Authentication.validateAndRefreshKey(key)) {
+			if (Authentication.validateAndRefreshKey(key)) { // Key is valid.
 				int idOwner = Authentication.getIdUserFromKey(key);
-				if (hasOwnership(idOwner, idOrga)) {
+				if (hasOwnership(idOwner, idOrga)) { // Has the ownership.
 					List<User> users = getMembers(idOrga);
 
 					answer = ServicesTools.createPositiveAnswer();
-
 					
 					JSONArray userArray = new JSONArray();
 					JSONObject crt = new JSONObject();
 					crt.put("id", idOwner);
 					crt.put("username", Authentication.getUserFromId(idOwner).getUsername());
 					userArray.put(crt);
-					
+					// User to json
 					for (User user : users) {
 						crt = new JSONObject();
 						crt.put("id", user.getId());
@@ -243,14 +266,20 @@ public class OrganizationUtils {
 		return answer;
 	}
 
+	/**
+	 * Gives organization ownership to someone else.
+	 * @param key Authentication key.
+	 * @param idOrga Organization id.
+	 * @param idUser Id of the new owner.
+	 */
 	public static JSONObject transferOwnership(String key, int idOrga, int idUser) {
 		JSONObject answer;
 
 		try {
-			if (Authentication.validateAndRefreshKey(key)) {
+			if (Authentication.validateAndRefreshKey(key)) { // Key is valid.
 				int idOwner = Authentication.getIdUserFromKey(key);
-				if (Authentication.doesHeExists(idUser)) {
-					if (hasOwnership(idOwner, idOrga)) {
+				if (Authentication.doesHeExists(idUser)) { // New owner exists.
+					if (hasOwnership(idOwner, idOrga)) { // The user can perform this operation.
 						DBMapper.executeQuery(QUERY_CHANGE_OWNER, QueryType.INSERT, idUser, idOrga);
 						answer = ServicesTools.createPositiveAnswer();
 					} else {
@@ -271,6 +300,11 @@ public class OrganizationUtils {
 		return answer;
 	}
 
+	/**
+	 * Returns every member of an organization.
+	 * @param idOrga Organization's id.
+	 * @return List of members.
+	 */
 	private static List<User> getMembers(int idOrga) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		ArrayList<User> result = new ArrayList<>();
 
@@ -283,6 +317,11 @@ public class OrganizationUtils {
 		return result;
 	}
 
+	/**
+	 * List every organization owned by an user.
+	 * @param idUser User's id.
+	 * @return List of organization.
+	 */
 	private static List<Organization> getOwnedOrganizations(int idUser) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		ArrayList<Organization> result = new ArrayList<>();
 
@@ -297,6 +336,11 @@ public class OrganizationUtils {
 		return result;
 	}
 
+	/**
+	 * Get every organization an user is member of.
+	 * @param idUser Users id.
+	 * @return List of organizations.
+	 */
 	private static List<Organization> getOrganizationByMember(int idUser) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		ArrayList<Organization> result = new ArrayList<>();
 		ResultSet resultSet = DBMapper.executeQuery(QUERY_GET_ORG_BY_MEMBER, QueryType.SELECT, idUser);
@@ -308,6 +352,10 @@ public class OrganizationUtils {
 		return result;
 	}
 
+	/**
+	 * Get an organization.
+	 * @param idOrga Orgnaization's id.
+	 */
 	private static Organization getOrganizationById(int idOrga) throws SQLException, CannotConnectToDatabaseException, QueryFailedException {
 		ResultSet result = DBMapper.executeQuery(QUERY_GET_ORG, QueryType.SELECT, idOrga);
 
@@ -319,20 +367,27 @@ public class OrganizationUtils {
 		}
 	}
 
-
+	/**
+	 * Is this name is use by an organization ?
+	 */
 	private static boolean isNameInUse(String name) throws SQLException, CannotConnectToDatabaseException, QueryFailedException {
 		ResultSet result = DBMapper.executeQuery(QUERY_NAME_IN_USE, QueryType.SELECT, name);
 
 		return result.next();
 	}
 
-
+	/**
+	 * Does this user owns this organization ?
+	 */
 	public static boolean hasOwnership(int idUser, int idOrga) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		ResultSet result = DBMapper.executeQuery(QUERY_IS_OWNER, QueryType.SELECT, idOrga, idUser);
 
 		return result.next();
 	}
-
+	
+	/**
+	 * Does this user is a member of this organization ?
+	 */
 	public static boolean isMember(int idUser, int idOrga) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		ResultSet result = DBMapper.executeQuery(QUERY_IS_MEMBER, QueryType.SELECT, idOrga, idUser);
 

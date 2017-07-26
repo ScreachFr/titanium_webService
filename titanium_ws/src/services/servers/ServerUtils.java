@@ -39,6 +39,15 @@ public class ServerUtils {
 	
 	private final static String QUERY_GET_SERVER = "SELECT * FROM servers WHERE idserver = ?;";
 
+	/**
+	 * Add a server to an organization.
+	 * @param key Authentication key.
+	 * @param idOrga Organization id.
+	 * @param name New server name.
+	 * @param host New server host.
+	 * @param port New server port.
+	 * @param password New server password.
+	 */
 	public static JSONObject addServer(String key, int idOrga, String name, String host, int port, String password) {
 		JSONObject answer;
 
@@ -65,6 +74,11 @@ public class ServerUtils {
 		return answer;
 	}
 
+	/**
+	 * removes a server from an organization. It completely removes the server from database.
+	 * @param key Authentication key.
+	 * @param idServer Server to remove.
+	 */
 	public static JSONObject removeServer(String key, int idServer) {
 		JSONObject answer;
 
@@ -92,6 +106,15 @@ public class ServerUtils {
 		return answer;
 	}
 
+	/**
+	 * Changes server informations.
+	 * @param key Authentication key.
+	 * @param idServer Server's id.
+	 * @param name Server's new name.
+	 * @param host Server's new host.
+	 * @param port Server's new port.
+	 * @param password Server's new password.
+	 */
 	public static JSONObject editServer(String key, int idServer, String name, String host, int port, String password) {
 		JSONObject answer;
 
@@ -119,7 +142,12 @@ public class ServerUtils {
 
 		return answer;
 	}
-
+	
+	/**
+	 * Checks if you can connect to a server.
+	 * @param key Authentication key.
+	 * @param idServer Server's id.
+	 */
 	public static JSONObject checkConnection(String key, int idServer) {
 		JSONObject answer;
 
@@ -155,6 +183,13 @@ public class ServerUtils {
 		return answer;
 	}
 
+	/**
+	 * Execute a command on the server.
+	 * @param key Authentication key.
+	 * @param idServer Server's id.
+	 * @param command Command to execute.
+	 * @param timeout Timeout.
+	 */
 	public static JSONObject executeCommand(String key, int idServer, String command, long timeout) {
 		JSONObject answer;
 
@@ -201,6 +236,11 @@ public class ServerUtils {
 		return answer;
 	}
 	
+	/**
+	 * List every available servers owned by an organization.
+	 * @param key Authentication key.
+	 * @param idOrga Organization's id.
+	 */
 	public static JSONObject listServers(String key, int idOrga) {
 		JSONObject answer;
 		
@@ -237,6 +277,9 @@ public class ServerUtils {
 		return answer;
 	}
 
+	/**
+	 * Returns every servers owned by an organization.
+	 */
 	private static List<Server> getServerListByOrganization(int idOrga) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		ArrayList<Server> result = new ArrayList<>();
 		String name, address, password;
@@ -258,18 +301,30 @@ public class ServerUtils {
 		return result;
 	}
 	
+	/**
+	 * Is this name in use by another server in this organization ?
+	 */
 	private static boolean isNameInUse(String name, int idOrga) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		return DBMapper.exists(DBMapper.executeQuery(QUERY_CHECK_NAME, QueryType.SELECT, name, idOrga));
 	}
 
+	/**
+	 * Is there already a server registered with this host and port in this organization. 
+	 */
 	private static boolean isHostAndPortInUse(String host, int port, int idOrga) throws SQLException, CannotConnectToDatabaseException, QueryFailedException {
 		return DBMapper.exists(DBMapper.executeQuery(QUERY_CHECK_HOST_PORT, QueryType.SELECT, host, port, idOrga));
 	}
 
+	/**
+	 * Does this server exists ?
+	 */
 	private static boolean serverExists(int idServer) throws SQLException, CannotConnectToDatabaseException, QueryFailedException {
 		return DBMapper.exists(DBMapper.executeQuery(QUERY_GET_SERVER, QueryType.SELECT, idServer));
 	}
 
+	/**
+	 * Get a server by id.
+	 */
 	private static Server getServer(int idServer) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		ResultSet rs = DBMapper.executeQuery(QUERY_GET_SERVER, QueryType.SELECT, idServer);
 
@@ -284,6 +339,9 @@ public class ServerUtils {
 
 	}
 
+	/**
+	 * Does this user has the right to modify this server ?
+	 */
 	private static boolean canModify(int idUser, int idServer) throws SQLException, CannotConnectToDatabaseException, QueryFailedException {
 		ResultSet rs = DBMapper.executeQuery(QUERY_GET_SERVER, QueryType.SELECT, idServer);
 
@@ -295,6 +353,9 @@ public class ServerUtils {
 		return OrganizationUtils.hasOwnership(idUser, idOrga);
 	}
 
+	/**
+	 * Does this user can access this server ?
+	 */
 	private static boolean canAccess(int idUser, int idServer) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		ResultSet rs = DBMapper.executeQuery(QUERY_GET_SERVER, QueryType.SELECT, idServer);
 
