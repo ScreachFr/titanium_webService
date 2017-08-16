@@ -58,6 +58,15 @@ public class ServicesTools {
 
 		return json;
 	}
+	
+	public static JSONObject createJSONError(ServletError error, Exception e) {
+		JSONObject json = createJSONError(error);
+
+		if (Debug.isInDebug()) 
+			json.put("debug", e.getMessage());
+		
+		return json;
+	}
 
 	public static JSONObject createPositiveAnswer() {
 		JSONObject ret = new JSONObject();
@@ -106,6 +115,11 @@ public class ServicesTools {
 			Debug.display_stack(e);
 			result = createJSONError(DataBaseErrors.UKNOWN_DB_EXCEPTION);
 		}
+		
+		if (Debug.isInDebug()) {
+			result.put("debug", e.getMessage());
+		}
+		
 		
 		return result;
 	}

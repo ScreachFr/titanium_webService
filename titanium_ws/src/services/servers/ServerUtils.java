@@ -19,6 +19,7 @@ import services.organization.OrgaErrors;
 import services.organization.OrganizationUtils;
 import services.servers.core.ConnectionFailureException;
 import services.servers.core.Server;
+import utils.Debug;
 
 public class ServerUtils {
 	// Duplication
@@ -164,7 +165,9 @@ public class ServerUtils {
 							answer = ServicesTools.createPositiveAnswer();
 							server.disconnect();
 						} catch (IllegalStateException | IOException | ConnectionFailureException e) {
-							answer = ServicesTools.createJSONError(ServerErrors.CANNOT_CONNECT);
+							answer = ServicesTools.createJSONError(ServerErrors.CANNOT_CONNECT, e);
+							if (Debug.isInDebug())
+								e.printStackTrace();
 						}
 
 					} else {
@@ -217,7 +220,7 @@ public class ServerUtils {
 							
 							server.disconnect();
 						} catch (IllegalStateException | IOException | ConnectionFailureException e) {
-							answer = ServicesTools.createJSONError(ServerErrors.CANNOT_CONNECT);
+							answer = ServicesTools.createJSONError(ServerErrors.CANNOT_CONNECT, e);
 						} 
 
 					} else {

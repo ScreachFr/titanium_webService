@@ -79,6 +79,7 @@ public class Authentication {
 					
 					answer = ServicesTools.createPositiveAnswer();
 					answer.put(ServicesTools.KEY_ARG, key);
+					answer.put(QUERY_IDUSER_KEY, result.getInt(LABEL_IDUSER));
 				} else {
 					answer = ServicesTools.createJSONError(AuthErrors.WRONG_USERNAME_OR_PASSWORD);
 				}

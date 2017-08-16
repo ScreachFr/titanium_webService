@@ -20,7 +20,7 @@ JSON
 
 ## Output example
 ```JSON
-{"success" : true, "key" : "efknsldfn1dq35de1sedsef1"} 
+{"success" : true, "key" : "efknsldfn1dq35de1sedsef1", "iduser" : 5} 
 {"errorCode" : 1001, "errorMessage" : "Wrong username/password"}
 ```
 

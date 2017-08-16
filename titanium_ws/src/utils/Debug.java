@@ -1,8 +1,14 @@
 package utils;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.json.JSONException;
+
 public class Debug {
 	//If DEBUG is true the program will run in debug mode.
-	public final static boolean DEBUG = true;
+	private  static Boolean isInDebugMode = null;
 	private static String stack = "";
 	
 	
@@ -12,7 +18,7 @@ public class Debug {
 	 * 	String to display.
 	 */
 	public static void display_notice(String notice) {
-		if(DEBUG)
+		if(isInDebug())
 			System.out.println("DEBUG : " + notice);
 	}
 	
@@ -22,7 +28,7 @@ public class Debug {
 	 * 	Exception to use for the stack trace's display.
 	 */
 	public static void display_stack(Exception e) {
-		if(DEBUG) {
+		if(isInDebug()) {
 			System.out.println("DEBUG ------");
 			e.printStackTrace();
 			System.out.println("DEBUG ------");
@@ -48,6 +54,23 @@ public class Debug {
 	
 	public static String getStack() {
 		return stack;
+	}
+	
+	public static boolean isInDebug() {
+		if (isInDebugMode == null) {
+			try {
+				isInDebugMode = Boolean.parseBoolean(ConfigLoader.getVar("debug"));
+			} catch (JSONException | IOException e) {
+				isInDebugMode = true;
+				Logger.getGlobal().log(Level.WARNING, "Can't load config, debug has been set to true by default.");
+				e.printStackTrace();
+			}
+		}
+		
+		
+		
+		return isInDebugMode;
+		
 	}
 }
 
