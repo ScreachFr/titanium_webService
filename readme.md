@@ -82,7 +82,7 @@ Result :
 You can add member with the following request :
 
 `
-titanium_ws_path/org/addmember?key=1f4c655c895b4a238242788b6422038f&idorga=6&isuser=3
+titanium_ws_path/org/addmember?key=1f4c655c895b4a238242788b6422038f&idorga=6&iduser=3
 `
 
 Result :
@@ -92,7 +92,7 @@ Result :
 
 Now that everything is setup correctly you can add servers to your organization : 
 
-`titanium_ws_path/org/addmember?key=1f4c655c895b4a238242788b6422038f&idorga=6name=top Server&host=impot.gouv.fr&port=42666&password=t0ps3cr3t`
+`titanium_ws_path/org/members/add?key=1f4c655c895b4a238242788b6422038f&idorga=6name=top Server&host=impot.gouv.fr&port=42666&password=t0ps3cr3t`
 
 Result :
 ```json

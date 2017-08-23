@@ -1,7 +1,7 @@
 # Add a Member to Organization
 
 ## URL
-```/org/addmember```
+```/org/members/add```
 
 ## Description
 Add an user to the organization. This way, the user will be able to access every servers listed in this organization.
