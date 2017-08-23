@@ -120,7 +120,7 @@
 	<!-- Organization -->
 	<servlet-mapping> 
 		<servlet-name>AddMember</servlet-name> 
-		<url-pattern>/org/addmember</url-pattern> 
+		<url-pattern>/org/members/add</url-pattern> 
 	</servlet-mapping>
 	<servlet-mapping> 
 		<servlet-name>Create</servlet-name> 

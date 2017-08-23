@@ -39,6 +39,8 @@ public class ServerUtils {
 	private final static String QUERY_LIST_SERVERS = "SELECT * FROM servers WHERE owner = ?;";
 	
 	private final static String QUERY_GET_SERVER = "SELECT * FROM servers WHERE idserver = ?;";
+	private final static String QUERY_GET_SERVER_BY_NAME = "SELECT * FROM servers WHERE name = ?;";
+	
 
 	/**
 	 * Add a server to an organization.
@@ -61,7 +63,9 @@ public class ServerUtils {
 						answer = ServicesTools.createJSONError(ServerErrors.DUPLICATED_SERVER);
 					} else { // Host and port are available.
 						DBMapper.executeQuery(QUERY_ADD_SERVER, QueryType.INSERT, idOrga, host, port, password, name);
+						Server s = getServer(name);
 						answer = ServicesTools.createPositiveAnswer();
+						answer.put(ServicesTools.IDSERVER_ARG, s.getId());
 					}
 				}
 
@@ -330,6 +334,23 @@ public class ServerUtils {
 	 */
 	private static Server getServer(int idServer) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
 		ResultSet rs = DBMapper.executeQuery(QUERY_GET_SERVER, QueryType.SELECT, idServer);
+
+		if (rs.next()) {
+			Server result = new Server(rs.getInt(1), rs.getString(6),
+					rs.getString(3), rs.getInt(4), rs.getString(5));
+
+			return result;
+		} else {
+			return null;
+		}
+
+	}
+	
+	/**
+	 * Get a server by its name.
+	 */
+	private static Server getServer(String name) throws CannotConnectToDatabaseException, QueryFailedException, SQLException {
+		ResultSet rs = DBMapper.executeQuery(QUERY_GET_SERVER_BY_NAME, QueryType.SELECT, name);
 
 		if (rs.next()) {
 			Server result = new Server(rs.getInt(1), rs.getString(6),

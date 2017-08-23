@@ -27,7 +27,7 @@ JSON
 
 ## Output example
 ```JSON
-{“success” : true} 
+{"success" : true, "id" : 5} 
 {"errorCode" : 4001, "errorMessage" : "Duplicated server."}
 ```
 
