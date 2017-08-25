@@ -280,7 +280,10 @@ public class OrganizationUtils {
 				int idOwner = Authentication.getIdUserFromKey(key);
 				if (Authentication.doesHeExists(idUser)) { // New owner exists.
 					if (hasOwnership(idOwner, idOrga)) { // The user can perform this operation.
+						DBMapper.executeQuery(QUERY_REMOVE_MEMBER, QueryType.INSERT, idOrga, idUser);
+						DBMapper.executeQuery(QUERY_ADD_MEMBER, QueryType.INSERT, idOrga, idOwner);
 						DBMapper.executeQuery(QUERY_CHANGE_OWNER, QueryType.INSERT, idUser, idOrga);
+						
 						answer = ServicesTools.createPositiveAnswer();
 					} else {
 						answer = ServicesTools.createJSONError(OrgaErrors.OWNERSHIP_REQ);
